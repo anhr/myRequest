@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD XHTML Mobile 1.2//EN" "http://www.openmobilealliance.org/tech/DTD/xhtml-mobile12.dtd">
+<!--<!doctype html>-->
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+    <title>XMLHttpRequest wrapper</title>
+	<meta name="author" content="Andrej Hristoliubov anhr@mail.ru">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	
+	<!--
+		Get all scripts from current site.
+		You can edit all scripts,
+		but my updates in the gitgub https://github.com/anhr/InputKeyFilter project is not available.
+	 -->
+	<script type="text/javascript" src="Common.js"></script>
+	<script type="text/javascript" src="myRequest.js"></script>
+ 
+	<!--
+		Get all scripts from my project in gitgub https://github.com/anhr/InputKeyFilter.
+		You can use all my updates immediately if you getting all scripts from my project in gitgub,
+		but you can not edit scripts, except if you do a contribute in my github project.
+		
+		See details in http://stackoverflow.com/questions/17341122/link-and-execute-external-javascript-file-hosted-on-github
+	 -->
+	 <!--
+	<script type="text/javascript" src="https://rawgit.com/anhr/InputKeyFilter/master/Common.js"></script>
+	<script type="text/javascript" src="https://rawgit.com/anhr/InputKeyFilter/master/myRequest.js"></script>
+	 -->
+	
+</head>
+<body>
+	<p><a href='../'>Home</a> | <a href='https://github.com/anhr/AJAXwrapper' target="_blank">GitHub</a></p>
+	<p id='Message'></p>
+	<h1>XMLHttpRequest wrapper</h1>
+	<p>Please see examples of using of myRequest object for request to the server. myRequest object is cross-browser and hides some actions.</p>
+	<hr>
+	<input type=button value='"Hello world" request' onclick="javascript: onClickHelloWorld()" />
+	<script>
+		var myRequestDataHelloWorld;
+		function onClickHelloWorld(){
+			document.getElementById("Message").innerHTML = "";
+			myRequestDataHelloWorld = myRequest.Create(
+				"XMLHttpRequest.xml"//url
+//				"../../px/XMLHttpRequest.srf?c=1&p=200&cd=black&cf=white"//url
+				, myRequestDataHelloWorld
+			);
+			myRequest.XMLHttpRequestStart(myRequestDataHelloWorld, function(){//onreadystatechange
+					myRequest.ProcessReqChange(myRequestDataHelloWorld, function(req){//processStatus200
+						if(myRequest.processStatus200Error(req))
+							return true;
+						var response = myRequest.GetElementText(req, 'response');
+						if(response){
+							consoleLog("response: " + response);
+							var elementResponse = document.getElementById("responseHelloWorld");
+							//elementResponse.innerText = response;//Uncompatible with FireFox
+							elementResponse.innerHTML = response;
+							return true;
+						}
+						
+						ErrorMessage("Unknown response: " + req.responseText);
+						return true;
+					});
+				}
+			);
+		}
+	</script>
+	 response: <span id="responseHelloWorld"></span>
+	<hr>
+	
+	<input type=button value='Two request' onclick="javascript: onClickTwoRequest()" />
+	<script>
+		var myRequestDataTwoRequest;
+		function onClickTwoRequest(){
+			document.getElementById("Message").innerHTML = "";
+			myRequestDataTwoRequest = myRequest.Create(
+				"XMLHttpTwoRequest.xml"//url
+//				"../../px/XMLHttpRequest.srf?c=1&p=200&cd=black&cf=white"//url
+				, myRequestDataTwoRequest
+			);
+			
+			//First request
+			myRequest.XMLHttpRequestStart(myRequestDataTwoRequest, function(){//onreadystatechange
+					myRequest.ProcessReqChange(myRequestDataTwoRequest, function(req){//processStatus200
+						if(myRequest.processStatus200Error(req))
+							return true;
+						var tagName = 'firstresponse';
+						var response = myRequest.GetElementText(req, tagName);
+						if(response){
+							consoleLog("Request: " + tagName + ". Response: " + response);
+							var elementResponse = document.getElementById("FirstResponse");
+							//elementResponse.innerText = response;//Uncompatible with FireFox
+							elementResponse.innerHTML = response;
+							
+							//request again
+							myRequest.XMLHttpRequestStart(myRequestDataTwoRequest, function(){//onreadystatechange
+/*							
+								myRequest.ProcessReqChange(myRequestDataTwoRequest, function(req){//processStatus200
+									if(myRequest.processStatus200Error(req))
+										return true;
+									var tagName = 'secondresponse';
+									var response = myRequest.GetElementText(req, tagName);
+									if(response){
+										consoleLog("Request: " + tagName + ". Response: " + response);
+										var elementResponse = document.getElementById("SecondResponse");
+										//elementResponse.innerText = response;//Uncompatible with FireFox
+										elementResponse.innerHTML = response;
+										return true;
+									}
+									
+									ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText, false, false);
+									return true;
+								});
+*/								
+								//I do not use myRequest.ProcessReqChange(..) here
+								
+								req = myRequestDataTwoRequest.req;
+								if((req.readyState == 4) && (req.status == 200)){
+								
+									clearTimeout(myRequestDataTwoRequest.timeout_id_SendReq);//For compatibility with IE6
+									
+									var tagName = 'secondresponse';
+									var response = myRequest.GetElementText(req, tagName);
+									if(response){
+										consoleLog("Request: " + tagName + ". Response: " + response);
+										var elementResponse = document.getElementById("SecondResponse");
+										//elementResponse.innerText = response;//Uncompatible with FireFox
+										elementResponse.innerHTML = response;
+										return true;
+									}
+									
+									ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText, false, false);
+									return true;
+								}
+							});
+										
+							return true;
+						}
+						
+						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText);
+						return true;
+					});
+				}
+			);
+		}
+	</script>
+	 First response: "<span id="FirstResponse"></span>" Second response: "<span id="SecondResponse"></span>"
+	<hr>
+	
+	<input type=button value='Plain text request' onclick="javascript: onClickPlainText()" />
+	<script>
+		var myRequestDataPlainText;
+		function onClickPlainText(){
+			document.getElementById("Message").innerHTML = "";
+			myRequestDataPlainText = myRequest.Create(
+				"PlainText.txt"//url
+				, myRequestDataPlainText
+			);
+			myRequest.XMLHttpRequestStart(myRequestDataPlainText, function(){//onreadystatechange
+					myRequest.ProcessReqChange(myRequestDataPlainText, function(req){//processStatus200
+						if(myRequest.processStatus200Error(req))
+							return true;
+						var response = req.responseText;
+						consoleLog("response: " + response);
+						var elementResponse = document.getElementById("responsePlainText");
+						//elementResponse.innerText = response;//Uncompatible with FireFox
+						elementResponse.innerHTML = response;
+						return true;
+					});
+				}
+			);
+		}
+	</script>
+	 response: <span id="responsePlainText"></span>
+	<hr>
+	
+	<b>Currently tested in the follow bowsers:</b>
+	<ul>
+		<li>IE5 ... IE11, IE for Windows Phone</li>
+		<li>Crome 44, Crome Android 2.3.6, Crome Android 5</li>
+		<li>Internet in Samsung Galaxy S5. Android 5.0</li>
+		<li>Firefox 39</li>
+		<li>Opera 31, Opera 9.5 for Windows Mobile</li>
+		<li>Safari 5.1, Safari iOS 4.3.3</li>
+	</ul>
+	
+	Have a job for me? Please read <a href='../AboutMe/' target="_blank">About Me</a>.
+</body>
+</html>
