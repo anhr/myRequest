@@ -66,14 +66,13 @@
 	 response: <span id="responseHelloWorld"></span>
 	<hr>
 	
-	<input type=button value='Two request' onclick="javascript: onClickTwoRequest()" />
+	<input type=button value='First request and then second request' onclick="javascript: onClickTwoRequest()" />
 	<script>
 		var myRequestDataTwoRequest;
 		function onClickTwoRequest(){
 			document.getElementById("Message").innerHTML = "";
 			myRequestDataTwoRequest = myRequest.Create(
 				"XMLHttpTwoRequest.xml"//url
-//				"../../px/XMLHttpRequest.srf?c=1&p=200&cd=black&cf=white"//url
 				, myRequestDataTwoRequest
 			);
 			
@@ -87,7 +86,6 @@
 						if(response){
 							consoleLog("Request: " + tagName + ". Response: " + response);
 							var elementResponse = document.getElementById("FirstResponse");
-							//elementResponse.innerText = response;//Uncompatible with FireFox
 							elementResponse.innerHTML = response;
 							
 							//request again
@@ -101,7 +99,6 @@
 									if(response){
 										consoleLog("Request: " + tagName + ". Response: " + response);
 										var elementResponse = document.getElementById("SecondResponse");
-										//elementResponse.innerText = response;//Uncompatible with FireFox
 										elementResponse.innerHTML = response;
 										return true;
 									}
@@ -122,7 +119,6 @@
 									if(response){
 										consoleLog("Request: " + tagName + ". Response: " + response);
 										var elementResponse = document.getElementById("SecondResponse");
-										//elementResponse.innerText = response;//Uncompatible with FireFox
 										elementResponse.innerHTML = response;
 										return true;
 									}
@@ -145,6 +141,66 @@
 	 First response: "<span id="FirstResponse"></span>" Second response: "<span id="SecondResponse"></span>"
 	<hr>
 	
+	<input type=button value='Two requests at the same time' onclick="javascript: onClickTwoRequestSameTime()" />
+	<script>
+		var myRequestDataFirst;
+		var myRequestDataSecond;
+		function onClickTwoRequestSameTime(){
+			document.getElementById("Message").innerHTML = "";
+			
+			//First request
+			myRequestDataFirst = myRequest.Create(
+				"XMLHttpTwoRequest.xml"//url
+				, myRequestDataFirst
+			);
+			myRequest.XMLHttpRequestStart(myRequestDataFirst, function(){//onreadystatechange
+					myRequest.ProcessReqChange(myRequestDataFirst, function(req){//processStatus200
+						if(myRequest.processStatus200Error(req))
+							return true;
+						var tagName = 'firstresponse';
+						var response = myRequest.GetElementText(req, tagName);
+						if(response){
+							consoleLog("Request: " + tagName + ". Response: " + response);
+							var elementResponse = document.getElementById("FirstResponseSameTime");
+							//elementResponse.innerText = response;//Uncompatible with FireFox
+							elementResponse.innerHTML = response;
+							
+							return true;
+						}
+						
+						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText);
+						return true;
+					});
+				}
+			);
+			
+			//Second request
+			myRequestDataSecond = myRequest.Create(
+				"XMLHttpTwoRequest.xml"//url
+				, myRequestDataSecond
+			);
+			myRequest.XMLHttpRequestStart(myRequestDataSecond, function(){//onreadystatechange
+				myRequest.ProcessReqChange(myRequestDataSecond, function(req){//processStatus200
+					if(myRequest.processStatus200Error(req))
+						return true;
+					var tagName = 'secondresponse';
+					var response = myRequest.GetElementText(req, tagName);
+					if(response){
+						consoleLog("Request: " + tagName + ". Response: " + response);
+						var elementResponse = document.getElementById("SecondResponseSameTime");
+						elementResponse.innerHTML = response;
+						return true;
+					}
+					
+					ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText, false, false);
+					return true;
+				});
+			});
+		}
+	</script>
+	 First response: "<span id="FirstResponseSameTime"></span>" Second response: "<span id="SecondResponseSameTime"></span>"
+	<hr>
+	
 	<input type=button value='Plain text request' onclick="javascript: onClickPlainText()" />
 	<script>
 		var myRequestDataPlainText;
@@ -159,7 +215,6 @@
 						var response = req.responseText;
 						consoleLog("response: " + response);
 						var elementResponse = document.getElementById("responsePlainText");
-						//elementResponse.innerText = response;//Uncompatible with FireFox
 						elementResponse.innerHTML = response;
 						return true;
 					});
