@@ -95,15 +95,11 @@ var myRequest = {
 			myRequestData.req.open("GET", myRequestData.url, true);
 			var timeout = (60 + 30) * 1000;//Внимание!!! Задержка должна быть больше CSocketWaitEvent::WaitResponse
 //var timeout = 300;
-//			if (typeof myRequestData.req.timeout != 'undefined')//for IE6
 			if("timeout" in myRequestData.req)//for IE6
 				myRequestData.req.timeout = timeout;
-//			if (typeof myRequestData.req.ontimeout == 'undefined'){//for Safari, IE6
 			if("ontimeout" in myRequestData.req)
 				myRequestData.req.ontimeout = function() {
 				  ErrorMessage( 'XMLHttpRequest timeout', false, false);
-		//		  myRequest.XMLHttpRequestStop(this);
-		//		  this.send(null);
 				}
 			else{//for Safari, IE6
 				clearTimeout(myRequestData.timeout_id_SendReq);
@@ -111,7 +107,7 @@ var myRequest = {
 					ErrorMessage( 'XMLHttpRequest timeout 2', false, false);
 				}
 				, timeout);
-	consoleLog("setTimeout myRequestData.req.timeout_id_SendReq = " + myRequestData.req.timeout_id_SendReq);
+//consoleLog("setTimeout myRequestData.req.timeout_id_SendReq = " + myRequestData.req.timeout_id_SendReq);
 			}
 			myRequestData.req.send(null);
 		}catch(e){
@@ -120,7 +116,7 @@ var myRequest = {
 	}
 	
 	, XMLHttpRequestStop: function (myRequestData){
-//consoleLog("XMLHttpRequestStop(" + dataID + ")");
+//consoleLog("XMLHttpRequestStop(...)");
 		if(myRequestData.req == null)
 			return;
 		myRequestData.req.abort();
@@ -146,7 +142,6 @@ if(!isIE){
 				if(req.status == 200)//OK)
 				{
 					clearTimeout(myRequestData.timeout_id_SendReq);
-//					return myRequestData.processStatus200(req);
 					return processStatus200(req);
 				}//200://OK
 				else{
