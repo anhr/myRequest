@@ -9,13 +9,13 @@
 	<!--
 		Get all scripts from current site.
 		You can edit all scripts,
-		but my updates in the gitgub https://github.com/anhr/InputKeyFilter project is not available.
+		but my updates in the gitgub https://github.com/anhr/myRequest project is not available.
 	 -->
 	<script type="text/javascript" src="Common.js"></script>
 	<script type="text/javascript" src="myRequest.js"></script>
  
 	<!--
-		Get all scripts from my project in gitgub https://github.com/anhr/InputKeyFilter.
+		Get all scripts from my project in gitgub https://github.com/anhr/myRequest.
 		You can use all my updates immediately if you getting all scripts from my project in gitgub,
 		but you can not edit scripts, except if you do a contribute in my github project.
 		
@@ -156,8 +156,6 @@
 			);
 			myRequest.XMLHttpRequestStart(myRequestDataPlainText, function(){//onreadystatechange
 					myRequest.ProcessReqChange(myRequestDataPlainText, function(req){//processStatus200
-						if(myRequest.processStatus200Error(req))
-							return true;
 						var response = req.responseText;
 						consoleLog("response: " + response);
 						var elementResponse = document.getElementById("responsePlainText");
