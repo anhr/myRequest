@@ -1,6 +1,6 @@
-## myRequest obect. 
+## myRequest object. 
 
-The myRequest obect is cross-browser XMLHttpRequest wrapper. Your request code to the server is very simple, if you are using myRequest obect.
+The myRequest object is cross-browser XMLHttpRequest wrapper. Your request code to the server is very simple, if you are using myRequest object.
 
 Example: <a href='https://googledrive.com/host/0B5hS0tFSGjBZfkhKS1VobnFDTkJKR0tVamxadmlvTmItQ2pxVWR0WDZPdHZxM2hzS1J3ejQ/myRequest/' target="_blank">XMLHttpRequest wrapper</a>.
 
