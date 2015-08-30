@@ -83,16 +83,17 @@ function ErrorMessage(message, emailMe, StackTrace){
 		message += '\n\n' + printStackTrace().join("nn");
 	
 	//http://www.htmlhelp.com/reference/html40/entities/special.html
-	message = message.replace(/</g, '&lt;');
-	message = message.replace(/>/g, '&gt;');
-	
 	var body;
 	if(emailMe != false){
 		body = message;
 		body = body.replace(/\n/g, "%0D%0A");
 		body = body.replace(/ /g, "%20");
 		body = body.replace(/"/g, "%22");
+		body = body.replace(/&/g, "%26");
 	}
+	message = message.replace(/</g, '&lt;');
+	message = message.replace(/>/g, '&gt;');
+	
 	message = message.replace(/\n/g, '<BR>');
 	if(emailMe != false){
 		//http://www.rapidtables.com/web/html/mailto.htm

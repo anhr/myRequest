@@ -44,7 +44,8 @@
 				, myRequestDataHelloWorld
 			);
 			myRequest.XMLHttpRequestStart(myRequestDataHelloWorld, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataHelloWorld, function(req){//processStatus200
+					myRequest.ProcessReqChange(myRequestDataHelloWorld, function(myRequestData){//processStatus200
+						req = myRequestData.req;
 						if(myRequest.processStatus200Error(req))
 							return true;
 						var response = myRequest.GetElementText(req, 'response');
@@ -78,7 +79,8 @@
 			
 			//First request
 			myRequest.XMLHttpRequestStart(myRequestDataTwoRequest, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataTwoRequest, function(req){//processStatus200
+					myRequest.ProcessReqChange(myRequestDataTwoRequest, function(myRequestData){//processStatus200
+						req = myRequestData.req;
 						if(myRequest.processStatus200Error(req))
 							return true;
 						var tagName = 'firstresponse';
@@ -91,7 +93,8 @@
 							//request again
 							myRequest.XMLHttpRequestStart(myRequestDataTwoRequest, function(){//onreadystatechange
 /*							
-								myRequest.ProcessReqChange(myRequestDataTwoRequest, function(req){//processStatus200
+								myRequest.ProcessReqChange(myRequestDataTwoRequest, function(myRequestData){//processStatus200
+									req = myRequestData.req;
 									if(myRequest.processStatus200Error(req))
 										return true;
 									var tagName = 'secondresponse';
@@ -154,7 +157,8 @@
 				, myRequestDataFirst
 			);
 			myRequest.XMLHttpRequestStart(myRequestDataFirst, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataFirst, function(req){//processStatus200
+					myRequest.ProcessReqChange(myRequestDataFirst, function(myRequestData){//processStatus200
+						req = myRequestData.req;
 						if(myRequest.processStatus200Error(req))
 							return true;
 						var tagName = 'firstresponse';
@@ -180,7 +184,8 @@
 				, myRequestDataSecond
 			);
 			myRequest.XMLHttpRequestStart(myRequestDataSecond, function(){//onreadystatechange
-				myRequest.ProcessReqChange(myRequestDataSecond, function(req){//processStatus200
+				myRequest.ProcessReqChange(myRequestDataSecond, function(myRequestData){//processStatus200
+					req = myRequestData.req;
 					if(myRequest.processStatus200Error(req))
 						return true;
 					var tagName = 'secondresponse';
@@ -211,7 +216,8 @@
 				, myRequestDataPlainText
 			);
 			myRequest.XMLHttpRequestStart(myRequestDataPlainText, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataPlainText, function(req){//processStatus200
+					myRequest.ProcessReqChange(myRequestDataPlainText, function(myRequestData){//processStatus200
+						req = myRequestData.req;
 						var response = req.responseText;
 						consoleLog("response: " + response);
 						var elementResponse = document.getElementById("responsePlainText");

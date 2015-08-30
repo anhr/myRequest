@@ -142,7 +142,7 @@ if(!isIE){
 				if(req.status == 200)//OK)
 				{
 					clearTimeout(myRequestData.timeout_id_SendReq);
-					return processStatus200(req);
+					return processStatus200(myRequestData);
 				}//200://OK
 				else{
 					ErrorMessage("Invalid XMLHttpRequest status : " + req.status + " url: " + myRequestData.url);
