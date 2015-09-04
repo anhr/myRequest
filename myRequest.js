@@ -12,36 +12,17 @@
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  * 
  * Revision:
+ *  2015-09-04, : 
+ *       + myRequest from var to function
  *  2015-08-28, : 
  *       + Cosmetic changes
  *
  */
  
-var myRequest = {
-	Create: function(url, data){
-		var req;
-		if(data)
-			req = data.req;
-		var myRequestData = {
-				url: url
-				, req: req
-			};
-		try{
-			if((typeof myRequestData.req == 'undefined') || (myRequestData.req == null))
-				myRequestData.req = this.loadXMLDoc();
-		} catch(e) {
-			var message;
-			if(typeof e.message == 'undefined')
-				message = e;
-			else message = e.message;
-			ErrorMessage("Your browser is too old and is not compatible with our site.\n\n"
-				+ window.navigator.appName + " " + window.navigator.appVersion + "\n\n" + message);
-			return null;
-		}
-		return myRequestData;
-	}
+function myRequest(url, data){
+	this.url = url;
 	
-	, loadXMLDoc: function (){
+	this.loadXMLDoc = function(){
 		var req;
 	
 		if (window.XMLHttpRequest){
@@ -50,7 +31,7 @@ var myRequest = {
 				throw "new XMLHttpRequest() failed!"
 		}
 		else if (window.ActiveXObject){
-			req = myRequest.NewActiveXObject();
+			req = this.NewActiveXObject();
 			if (!req)
 				throw "NewActiveXObject() failed!"
 		}
@@ -58,7 +39,7 @@ var myRequest = {
 		return req;
 	}
 	
-	, NewActiveXObject: function (NewActiveXObject){
+	this.NewActiveXObject = function(){
 	  try { return new ActiveXObject("Msxml2.XMLHTTP.6.0"); }
 		catch(e) {}
 	  try { return new ActiveXObject("Msxml2.XMLHTTP.3.0"); }
@@ -71,59 +52,59 @@ var myRequest = {
 	  return null;
 	}
 	
-	, XMLHttpRequestStart: function (myRequestData, onreadystatechange){
+	this.XMLHttpRequestStart = function(onreadystatechange){
 	
-		this.XMLHttpRequestStop(myRequestData);//For compatibility with IE Windows Phone
+		this.XMLHttpRequestStop();//For compatibility with IE Windows Phone
 		
-		myRequestData.req.onreadystatechange = onreadystatechange;
+		this.req.onreadystatechange = onreadystatechange;
 		
-		if((typeof myRequestData.url == 'undefined') || (myRequestData.url == null))
-			throw "myRequestData.url = " + myRequestData.url + " failed!";
+		if((typeof this.url == 'undefined') || (this.url == null))
+			throw "myRequest.url = " + myRequest.url + " failed!";
 			
 		//ATTENTION!!! do not works in IE
-		if("onerror" in myRequestData.req){
-			myRequestData.req.onerror = function(event){
-				ErrorMessage("XMLHttpRequest error. url: " + myRequestData.url, false, false);
+		if("onerror" in this.req){
+			this.req.onerror = function(event){
+				ErrorMessage("XMLHttpRequest error. url: " + this.url, false, false);
 			}
 		}
 		
-		this.XMLHttpRequestReStart(myRequestData);
+		this.XMLHttpRequestReStart();
 	}
 	
-	, XMLHttpRequestReStart: function (myRequestData){
+	this.XMLHttpRequestReStart = function(){
 		try{
-			myRequestData.req.open("GET", myRequestData.url, true);
+			this.req.open("GET", this.url, true);
 			var timeout = (60 + 30) * 1000;//Внимание!!! Задержка должна быть больше CSocketWaitEvent::WaitResponse
 //var timeout = 300;
-			if("timeout" in myRequestData.req)//for IE6
-				myRequestData.req.timeout = timeout;
-			if("ontimeout" in myRequestData.req)
-				myRequestData.req.ontimeout = function() {
+			if("timeout" in this.req)//for IE6
+				this.req.timeout = timeout;
+			if("ontimeout" in this.req)
+				this.req.ontimeout = function() {
 				  ErrorMessage( 'XMLHttpRequest timeout', false, false);
 				}
 			else{//for Safari, IE6
-				clearTimeout(myRequestData.timeout_id_SendReq);
-				myRequestData.timeout_id_SendReq = setTimeout(function(){
+				clearTimeout(this.timeout_id_SendReq);
+				this.timeout_id_SendReq = setTimeout(function(){
 					ErrorMessage( 'XMLHttpRequest timeout 2', false, false);
 				}
 				, timeout);
-//consoleLog("setTimeout myRequestData.req.timeout_id_SendReq = " + myRequestData.req.timeout_id_SendReq);
+//consoleLog("setTimeout this.req.timeout_id_SendReq = " + this.req.timeout_id_SendReq);
 			}
-			myRequestData.req.send(null);
+			this.req.send(null);
 		}catch(e){
-			ErrorMessage(e.message + " url: " + myRequestData.url, false, false);
+			ErrorMessage(e.message + " url: " + this.url, false, false);
 		}
 	}
 	
-	, XMLHttpRequestStop: function (myRequestData){
+	this.XMLHttpRequestStop = function(){
 //consoleLog("XMLHttpRequestStop(...)");
-		if(myRequestData.req == null)
+		if(this.req == null)
 			return;
-		myRequestData.req.abort();
+		this.req.abort();
 	}
 	
-	, ProcessReqChange: function (myRequestData, processStatus200){
-		var req = myRequestData.req;
+	this.ProcessReqChange = function(processStatus200){
+		var req = this.req;
 if(!isIE){
 //	consoleLog("processReqChange(); req.statusText: " + req.statusText + ". req.status = " + req.status + ". req.readyState = " + req.readyState + ". req.responseText: " + req.responseText);
 }	
@@ -141,11 +122,11 @@ if(!isIE){
 				//Я не могу вставлять switch один в другой
 				if(req.status == 200)//OK)
 				{
-					clearTimeout(myRequestData.timeout_id_SendReq);
-					return processStatus200(myRequestData);
+					clearTimeout(this.timeout_id_SendReq);
+					return processStatus200(this);
 				}//200://OK
 				else{
-					ErrorMessage("Invalid XMLHttpRequest status : " + req.status + " url: " + myRequestData.url);
+					ErrorMessage("Invalid XMLHttpRequest status : " + req.status + " url: " + this.url);
 				}
 			}
 			break;
@@ -162,8 +143,8 @@ if(!isIE){
 		return true;
 	}
 	
-	, processStatus200Error: function (xmlhttp){
-		var error = myRequest.GetElementText(xmlhttp, 'error', true);
+	this.processStatus200Error = function(){
+		var error = this.GetElementText('error', true);
 		if(error)
 		{
 			ErrorMessage(error);
@@ -172,7 +153,8 @@ if(!isIE){
 		return false;
 	}
 	
-	, GetElementText: function (xmlhttp, tagName, noDisplayErrorMessage){
+	this.GetElementText = function(tagName, noDisplayErrorMessage){
+		var xmlhttp = this.req;
 		if(!xmlhttp.responseXML){
 			if(noDisplayErrorMessage != true)
 				ErrorMessage('GetXMLElementText(xmlhttp, ' + tagName + '); xmlhttp.responseXML is null.\nxmlhttp.responseText:\n' + xmlhttp.responseText);
@@ -184,7 +166,7 @@ if(!isIE){
 		
 		if(element.length == 0){
 			if(noDisplayErrorMessage != true)
-				ErrorMessage('GetXMLElementText(xmlhttp, ' + tagName + '); element.length == ' + element.length);
+				ErrorMessage('GetXMLElementText(xmlhttp, "' + tagName + '"); element.length == ' + element.length);
 			return "";
 		}
 		var text = "";
@@ -203,6 +185,26 @@ if(!isIE){
 			else text += element[i].textContent;//Chrome
 		}
 		return text;
+	}
+	
+	if(data)
+		this.req = data.req;
+	else{
+		try{
+			this.req = this.loadXMLDoc();
+		} catch(e) {
+			var message;
+			if(typeof e.message == 'undefined')
+				message = e;
+			else message = e.message;
+			ErrorMessage("Your browser is too old and is not compatible with our site.\n\n"
+				+ window.navigator.appName + " " + window.navigator.appVersion + "\n\n" + message);
+			return;
+		}
+	}
+	if(!this.req){
+		consoleError("Invalid myRequest.req: " + this.req);
+		return;
 	}
 }
 

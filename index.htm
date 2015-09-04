@@ -51,17 +51,17 @@
 		var myRequestDataHelloWorld;
 		function onClickHelloWorld(){
 			document.getElementById("Message").innerHTML = "";
-			myRequestDataHelloWorld = myRequest.Create(
+			myRequestDataHelloWorld = new myRequest(
 				"XMLHttpRequest.xml"//url
 //				"../../px/XMLHttpRequest.srf?c=1&p=200&cd=black&cf=white"//url
 				, myRequestDataHelloWorld
 			);
-			myRequest.XMLHttpRequestStart(myRequestDataHelloWorld, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataHelloWorld, function(myRequestData){//processStatus200
-						req = myRequestData.req;
-						if(myRequest.processStatus200Error(req))
+			myRequestDataHelloWorld.XMLHttpRequestStart(function(){//onreadystatechange
+					myRequestDataHelloWorld.ProcessReqChange(function(myRequest){//processStatus200
+						if(myRequest.processStatus200Error())
 							return true;
-						var response = myRequest.GetElementText(req, 'response');
+						var tagName = 'response';
+						var response = myRequest.GetElementText(tagName);
 						if(response){
 							consoleLog("response: " + response);
 							var elementResponse = document.getElementById("responseHelloWorld");
@@ -70,7 +70,7 @@
 							return true;
 						}
 						
-						ErrorMessage("Unknown response: " + req.responseText);
+						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + myRequest.req.responseText);
 						return true;
 					});
 				}
@@ -85,33 +85,32 @@
 		var myRequestDataTwoRequest;
 		function onClickTwoRequest(){
 			document.getElementById("Message").innerHTML = "";
-			myRequestDataTwoRequest = myRequest.Create(
+			myRequestDataTwoRequest = new myRequest(
 				"XMLHttpTwoRequest.xml"//url
 				, myRequestDataTwoRequest
 			);
 			
 			//First request
-			myRequest.XMLHttpRequestStart(myRequestDataTwoRequest, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataTwoRequest, function(myRequestData){//processStatus200
-						req = myRequestData.req;
-						if(myRequest.processStatus200Error(req))
+			myRequestDataTwoRequest.XMLHttpRequestStart(function(){//onreadystatechange
+					myRequestDataTwoRequest.ProcessReqChange(function(myRequest){//processStatus200
+//						req = myRequestData.req;
+						if(myRequest.processStatus200Error())
 							return true;
 						var tagName = 'firstresponse';
-						var response = myRequest.GetElementText(req, tagName);
+						var response = myRequest.GetElementText(tagName);
 						if(response){
 							consoleLog("Request: " + tagName + ". Response: " + response);
 							var elementResponse = document.getElementById("FirstResponse");
 							elementResponse.innerHTML = response;
 							
 							//request again
-							myRequest.XMLHttpRequestStart(myRequestDataTwoRequest, function(){//onreadystatechange
+							myRequest.XMLHttpRequestStart(function(){//onreadystatechange
 /*							
-								myRequest.ProcessReqChange(myRequestDataTwoRequest, function(myRequestData){//processStatus200
-									req = myRequestData.req;
-									if(myRequest.processStatus200Error(req))
+								myRequest.ProcessReqChange(function(myRequest){//processStatus200
+									if(myRequest.processStatus200Error())
 										return true;
 									var tagName = 'secondresponse';
-									var response = myRequest.GetElementText(req, tagName);
+									var response = myRequest.GetElementText(tagName);
 									if(response){
 										consoleLog("Request: " + tagName + ". Response: " + response);
 										var elementResponse = document.getElementById("SecondResponse");
@@ -119,7 +118,7 @@
 										return true;
 									}
 									
-									ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText, false, false);
+									ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + myRequest.req.responseText, false, false);
 									return true;
 								});
 */								
@@ -131,7 +130,7 @@
 									clearTimeout(myRequestDataTwoRequest.timeout_id_SendReq);//For compatibility with IE6
 									
 									var tagName = 'secondresponse';
-									var response = myRequest.GetElementText(req, tagName);
+									var response = myRequest.GetElementText(tagName);
 									if(response){
 										consoleLog("Request: " + tagName + ". Response: " + response);
 										var elementResponse = document.getElementById("SecondResponse");
@@ -147,7 +146,7 @@
 							return true;
 						}
 						
-						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText);
+						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + myRequest.req.responseText);
 						return true;
 					});
 				}
@@ -165,17 +164,16 @@
 			document.getElementById("Message").innerHTML = "";
 			
 			//First request
-			myRequestDataFirst = myRequest.Create(
+			myRequestDataFirst = new myRequest(
 				"XMLHttpTwoRequest.xml"//url
 				, myRequestDataFirst
 			);
-			myRequest.XMLHttpRequestStart(myRequestDataFirst, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataFirst, function(myRequestData){//processStatus200
-						req = myRequestData.req;
-						if(myRequest.processStatus200Error(req))
+			myRequestDataFirst.XMLHttpRequestStart(function(){//onreadystatechange
+					myRequestDataFirst.ProcessReqChange(function(myRequest){//processStatus200
+						if(myRequest.processStatus200Error())
 							return true;
 						var tagName = 'firstresponse';
-						var response = myRequest.GetElementText(req, tagName);
+						var response = myRequest.GetElementText(tagName);
 						if(response){
 							consoleLog("Request: " + tagName + ". Response: " + response);
 							var elementResponse = document.getElementById("FirstResponseSameTime");
@@ -185,24 +183,23 @@
 							return true;
 						}
 						
-						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText);
+						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + myRequest.req.responseText);
 						return true;
 					});
 				}
 			);
 			
 			//Second request
-			myRequestDataSecond = myRequest.Create(
+			myRequestDataSecond = new myRequest(
 				"XMLHttpTwoRequest.xml"//url
 				, myRequestDataSecond
 			);
-			myRequest.XMLHttpRequestStart(myRequestDataSecond, function(){//onreadystatechange
-				myRequest.ProcessReqChange(myRequestDataSecond, function(myRequestData){//processStatus200
-					req = myRequestData.req;
-					if(myRequest.processStatus200Error(req))
+			myRequestDataSecond.XMLHttpRequestStart(function(){//onreadystatechange
+				myRequestDataSecond.ProcessReqChange(function(myRequest){//processStatus200
+					if(myRequest.processStatus200Error())
 						return true;
 					var tagName = 'secondresponse';
-					var response = myRequest.GetElementText(req, tagName);
+					var response = myRequest.GetElementText(tagName);
 					if(response){
 						consoleLog("Request: " + tagName + ". Response: " + response);
 						var elementResponse = document.getElementById("SecondResponseSameTime");
@@ -210,7 +207,7 @@
 						return true;
 					}
 					
-					ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + req.responseText, false, false);
+					ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + myRequest.req.responseText, false, false);
 					return true;
 				});
 			});
@@ -224,14 +221,13 @@
 		var myRequestDataPlainText;
 		function onClickPlainText(){
 			document.getElementById("Message").innerHTML = "";
-			myRequestDataPlainText = myRequest.Create(
+			myRequestDataPlainText = new myRequest(
 				"PlainText.txt"//url
 				, myRequestDataPlainText
 			);
-			myRequest.XMLHttpRequestStart(myRequestDataPlainText, function(){//onreadystatechange
-					myRequest.ProcessReqChange(myRequestDataPlainText, function(myRequestData){//processStatus200
-						req = myRequestData.req;
-						var response = req.responseText;
+			myRequestDataPlainText.XMLHttpRequestStart(function(){//onreadystatechange
+					myRequestDataPlainText.ProcessReqChange(function(myRequest){//processStatus200
+						var response = myRequest.req.responseText;
 						consoleLog("response: " + response);
 						var elementResponse = document.getElementById("responsePlainText");
 						elementResponse.innerHTML = response;
