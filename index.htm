@@ -51,11 +51,7 @@
 		var myRequestDataHelloWorld;
 		function onClickHelloWorld(){
 			document.getElementById("Message").innerHTML = "";
-			myRequestDataHelloWorld = new myRequest(
-				"XMLHttpRequest.xml"//url
-//				"../../px/XMLHttpRequest.srf?c=1&p=200&cd=black&cf=white"//url
-				, myRequestDataHelloWorld
-			);
+			myRequestDataHelloWorld = new myRequest(myRequestDataHelloWorld);
 			myRequestDataHelloWorld.XMLHttpRequestStart(function(){//onreadystatechange
 					myRequestDataHelloWorld.ProcessReqChange(function(myRequest){//processStatus200
 						if(myRequest.processStatus200Error())
@@ -85,10 +81,8 @@
 		var myRequestDataTwoRequest;
 		function onClickTwoRequest(){
 			document.getElementById("Message").innerHTML = "";
-			myRequestDataTwoRequest = new myRequest(
-				"XMLHttpTwoRequest.xml"//url
-				, myRequestDataTwoRequest
-			);
+			myRequestDataTwoRequest = new myRequest(myRequestDataTwoRequest);
+			myRequestDataTwoRequest.url = "XMLHttpTwoRequest.xml";
 			
 			//First request
 			myRequestDataTwoRequest.XMLHttpRequestStart(function(){//onreadystatechange
@@ -164,10 +158,8 @@
 			document.getElementById("Message").innerHTML = "";
 			
 			//First request
-			myRequestDataFirst = new myRequest(
-				"XMLHttpTwoRequest.xml"//url
-				, myRequestDataFirst
-			);
+			myRequestDataFirst = new myRequest(myRequestDataFirst);
+			myRequestDataFirst.url = "XMLHttpTwoRequest.xml";
 			myRequestDataFirst.XMLHttpRequestStart(function(){//onreadystatechange
 					myRequestDataFirst.ProcessReqChange(function(myRequest){//processStatus200
 						if(myRequest.processStatus200Error())
@@ -190,10 +182,8 @@
 			);
 			
 			//Second request
-			myRequestDataSecond = new myRequest(
-				"XMLHttpTwoRequest.xml"//url
-				, myRequestDataSecond
-			);
+			myRequestDataSecond = new myRequest(myRequestDataSecond);
+			myRequestDataSecond.url = "XMLHttpTwoRequest.xml";
 			myRequestDataSecond.XMLHttpRequestStart(function(){//onreadystatechange
 				myRequestDataSecond.ProcessReqChange(function(myRequest){//processStatus200
 					if(myRequest.processStatus200Error())
@@ -221,10 +211,8 @@
 		var myRequestDataPlainText;
 		function onClickPlainText(){
 			document.getElementById("Message").innerHTML = "";
-			myRequestDataPlainText = new myRequest(
-				"PlainText.txt"//url
-				, myRequestDataPlainText
-			);
+			myRequestDataPlainText = new myRequest(myRequestDataPlainText);
+			myRequestDataPlainText.url = "PlainText.txt";
 			myRequestDataPlainText.XMLHttpRequestStart(function(){//onreadystatechange
 					myRequestDataPlainText.ProcessReqChange(function(myRequest){//processStatus200
 						var response = myRequest.req.responseText;

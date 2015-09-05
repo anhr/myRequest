@@ -19,8 +19,8 @@
  *
  */
  
-function myRequest(url, data){
-	this.url = url;
+function myRequest(data){
+//	this.url = url;
 	
 	this.loadXMLDoc = function(){
 		var req;
@@ -58,9 +58,6 @@ function myRequest(url, data){
 		
 		this.req.onreadystatechange = onreadystatechange;
 		
-		if((typeof this.url == 'undefined') || (this.url == null))
-			throw "myRequest.url = " + myRequest.url + " failed!";
-			
 		//ATTENTION!!! do not works in IE
 		if("onerror" in this.req){
 			this.req.onerror = function(event){
@@ -71,9 +68,26 @@ function myRequest(url, data){
 		this.XMLHttpRequestReStart();
 	}
 	
+	this.getUrl = function(){
+		if((typeof this.url == 'undefined') || (this.url == null)){
+			this.url = "XMLHttpRequest.xml";
+//			throw "myRequest.url = " + myRequest.url + " failed!";
+		}
+		return this.url + (this.params ? this.params : "");
+	}
+	
 	this.XMLHttpRequestReStart = function(){
 		try{
-			this.req.open("GET", this.url, true);
+/*		
+			if((typeof this.url == 'undefined') || (this.url == null)){
+				this.url = "XMLHttpRequest.xml";
+	//			throw "myRequest.url = " + myRequest.url + " failed!";
+			}
+			var	url = this.url;
+			if(this.params)
+				url += this.params;
+*/			
+			this.req.open("GET", this.getUrl(), true);
 			var timeout = (60 + 30) * 1000;//Внимание!!! Задержка должна быть больше CSocketWaitEvent::WaitResponse
 //var timeout = 300;
 			if("timeout" in this.req)//for IE6
@@ -187,9 +201,11 @@ if(!isIE){
 		return text;
 	}
 	
-	if(data)
+	if(data){
 		this.req = data.req;
-	else{
+		this.url = data.url;
+		this.params = data.params;
+	}else{
 		try{
 			this.req = this.loadXMLDoc();
 		} catch(e) {
