@@ -52,7 +52,7 @@ function myRequest(data){
 	  return null;
 	}
 	
-	this.XMLHttpRequestStart = function(onreadystatechange){
+	this.XMLHttpRequestStart = function (onreadystatechange, async) {
 	
 		this.XMLHttpRequestStop();//For compatibility with IE Windows Phone
 		
@@ -65,7 +65,7 @@ function myRequest(data){
 			}
 		}
 		
-		this.XMLHttpRequestReStart();
+		this.XMLHttpRequestReStart(async);
 	}
 	
 	this.getUrl = function(){
@@ -76,34 +76,28 @@ function myRequest(data){
 		return this.url + (this.params ? this.params : "");
 	}
 	
-	this.XMLHttpRequestReStart = function(){
-		try{
-/*		
-			if((typeof this.url == 'undefined') || (this.url == null)){
-				this.url = "XMLHttpRequest.xml";
-	//			throw "myRequest.url = " + myRequest.url + " failed!";
-			}
-			var	url = this.url;
-			if(this.params)
-				url += this.params;
-*/			
-			this.req.open("GET", this.getUrl(), true);
-			var timeout = (60 + 30) * 1000;//Внимание!!! Задержка должна быть больше CSocketWaitEvent::WaitResponse
-//var timeout = 300;
-			if("timeout" in this.req)//for IE6
-				this.req.timeout = timeout;
-			if("ontimeout" in this.req)
-				this.req.ontimeout = function() {
-				  ErrorMessage( 'XMLHttpRequest timeout', false, false);
-				}
-			else{//for Safari, IE6
-				clearTimeout(this.timeout_id_SendReq);
-				this.timeout_id_SendReq = setTimeout(function(){
-					ErrorMessage( 'XMLHttpRequest timeout 2', false, false);
-				}
-				, timeout);
-//consoleLog("setTimeout this.req.timeout_id_SendReq = " + this.req.timeout_id_SendReq);
-			}
+	this.XMLHttpRequestReStart = function (async) {
+	    try {
+	        if (typeof async == 'undefined')
+	            async = true;
+	        this.req.open("GET", this.getUrl(), async);
+	        if (async) {
+	            var timeout = (60 + 30) * 1000;//Внимание!!! Задержка должна быть больше CSocketWaitEvent::WaitResponse
+	            if ("timeout" in this.req)//for IE6
+	                this.req.timeout = timeout;
+	            if ("ontimeout" in this.req)
+	                this.req.ontimeout = function () {
+	                    ErrorMessage('XMLHttpRequest timeout', false, false);
+	                }
+	            else {//for Safari, IE6
+	                clearTimeout(this.timeout_id_SendReq);
+	                this.timeout_id_SendReq = setTimeout(function () {
+	                    ErrorMessage('XMLHttpRequest timeout 2', false, false);
+	                }
+				    , timeout);
+	                //consoleLog("setTimeout this.req.timeout_id_SendReq = " + this.req.timeout_id_SendReq);
+	            }
+	        }
 			this.req.send(null);
 		}catch(e){
 			ErrorMessage(e.message + " url: " + this.url, false, false);
