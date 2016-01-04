@@ -218,3 +218,19 @@ if(!isIE){
 	}
 }
 
+function getSynchronousResponse(url) {
+    var response;
+    var request = new myRequest();
+    request.url = url;
+    request.XMLHttpRequestStart(function () {//onreadystatechange
+        request.ProcessReqChange(function (myRequest) {//processStatus200
+            if (myRequest.processStatus200Error())
+                return;
+            response = myRequest.req.responseText;
+            return;
+        });
+    }
+    , false//Synchronous mode
+    );
+    return response;
+}

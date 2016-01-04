@@ -76,33 +76,14 @@
 	 response: <span id="responseHelloWorld"></span>
 	<hr>
 	
-    <input type=button value='Synchronous request' onclick="javascript: onClickAsync()" />
+    <input type=button value='Synchronous request' onclick="javascript: onClickSync()" />
     <script>
 		var myRequestDataAsync;
-		function onClickAsync() {
+		function onClickSync() {
 		    consoleLog("onClickAsync() enter");
 		    document.getElementById("Message").innerHTML = "";
-		    var response;
-			myRequestDataAsync = new myRequest(myRequestDataAsync);
-			myRequestDataAsync.XMLHttpRequestStart(function(){//onreadystatechange
-					myRequestDataAsync.ProcessReqChange(function(myRequest){//processStatus200
-						if(myRequest.processStatus200Error())
-							return true;
-						var tagName = 'response';
-						response = myRequest.GetElementText(tagName);
-						if(response){
-							consoleLog("response: " + response);
-							return true;
-						}
-						ErrorMessage('tag name: "' + tagName + '" Unknown response: ' + myRequest.req.responseText);
-						return true;
-					});
-				}
-			, false);
-
 			var elementResponse = document.getElementById("responseAsync");
-		    //elementResponse.innerText = response;//Uncompatible with FireFox
-			elementResponse.innerHTML = response;
+			elementResponse.innerHTML = getSynchronousResponse();
 			consoleLog("onClickAsync() exit");
         }
     </script>
