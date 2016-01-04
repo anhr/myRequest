@@ -80,14 +80,13 @@
     <script>
 		var myRequestDataAsync;
 		function onClickSync() {
-		    consoleLog("onClickAsync() enter");
+		    consoleLog("onClickSync() enter");
 		    document.getElementById("Message").innerHTML = "";
-			var elementResponse = document.getElementById("responseAsync");
-			elementResponse.innerHTML = getSynchronousResponse();
-			consoleLog("onClickAsync() exit");
+			document.getElementById("responseSync").innerHTML = getSynchronousResponse();
+			consoleLog("onClickSync() exit");
         }
     </script>
-    response: <span id="responseAsync"></span>
+    response: <span id="responseSync"></span>
     <hr>
 
 	<input type=button value='First request and then second request' onclick="javascript: onClickTwoRequest()" />
