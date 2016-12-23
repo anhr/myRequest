@@ -2,7 +2,7 @@
 
 The myRequest object is cross-browser XMLHttpRequest wrapper. Your request code to the server is very simple, if you are using myRequest object.
 
-Example: <a href='https://googledrive.com/host/0B5hS0tFSGjBZfkhKS1VobnFDTkJKR0tVamxadmlvTmItQ2pxVWR0WDZPdHZxM2hzS1J3ejQ/myRequest/' target="_blank">XMLHttpRequest wrapper</a>.
+Example: <a href='http://anhr.ucoz.net/myRequest/' target="_blank">XMLHttpRequest wrapper</a>.
 
 ## On the following browsers have been successfully tested:
 
@@ -19,6 +19,6 @@ Opera 31, Opera 9.5 for Windows Mobile
 Safari 5.1, Safari iOS 4.3.3
 
 ## Have a job for me?
-Please read <a href='https://googledrive.com/host/0B5hS0tFSGjBZfkhKS1VobnFDTkJKR0tVamxadmlvTmItQ2pxVWR0WDZPdHZxM2hzS1J3ejQ/AboutMe/' target="_blank">About Me</a>.
+Please read <a href='http://anhr.ucoz.net/AboutMe/' target="_blank">About Me</a>.
 
 

@@ -114,8 +114,8 @@ function ErrorMessage(message, emailMe, StackTrace){
 
 function consoleLog(message){
 	try{
-		console.log(message);//Do not works in WP
-    } catch(e) {
+	    console.log(getPerformance(message));//Do not works in WP
+    } catch (e) {
     }
 }
 
@@ -123,10 +123,21 @@ function consoleError(msg)
 {
 	try
 	{
-		console.error(msg);
+	    console.error(getPerformance(msg));
     } catch(e) {
 //		alert(msg);
     }
+}
+
+function getPerformance(text)
+{
+    if (window.performance) {
+        var now = (window.performance.now() / 1000).toFixed(3);
+//        var now = g_user.nickname;//for LJ TV Chrome browser
+        text = now + ': ' + text;
+    }
+    $.connection.chatHub.server.consoleLog(text);
+    return text;
 }
 
 function getTagData (tag) {
@@ -231,10 +242,12 @@ function getOffsetSum(elem) {
         if (window.getComputedStyle) {
             var style = getComputedStyle(elem),
                 transform = style.transform || style.webkitTransform || style.mozTransform;
-            var mat = transform.match(/^matrix\((.+), (.+), (.+)\)$/);///^matrix3d\((.+)\)$/);
-            if (mat) {
-                top = top + parseInt(mat[3]);
-                left = left + parseInt(mat[2]);
+            if (typeof transform != 'undefined') {//do not support in IE 11
+                var mat = transform.match(/^matrix\((.+), (.+), (.+)\)$/);///^matrix3d\((.+)\)$/);
+                if (mat) {
+                    top = top + parseInt(mat[3]);
+                    left = left + parseInt(mat[2]);
+                }
             }
         }
 
@@ -306,7 +319,11 @@ function getLocale() {
 		return "";
 	}
 	
-	if((typeof navigator.languages != 'undefined') && (navigator.languages.length > 0))
+	if (
+        (typeof navigator.languages != 'undefined')
+        && (typeof navigator.languages != 'unknown')//for IE6
+        && (navigator.languages.length > 0)
+        )
 		return navigator.languages[0];//Chrome
 		
 	//IE
@@ -335,12 +352,82 @@ function getLanguageCode() {
         locale = parts[2];
     return lang;
 }
-
+/*
 function loadScript(url) {
     var script = document.createElement('script');
     script.setAttribute("type", 'text/javascript');
     script.setAttribute("src", url);
     document.getElementsByTagName("head")[0].appendChild(script);
+}
+*/
+//http://javascript.ru/forum/events/21439-dinamicheskaya-zagruzka-skriptov.html
+//https://learn.javascript.ru/onload-onerror
+var loadScript = function (src, onload, onerror, appendTo) {
+    if (!appendTo) {
+        appendTo = document.getElementsByTagName('head')[0];
+    }
+    /*//not support in IE6
+    var script = appendTo.querySelector('script[id="' + src + '"]');
+    if (script) {
+        if (onload)
+            setTimeout(function () { onload() }, 100);//Если не сделать эту задержку, то при открыити локальной веб камеры иногда не успевает скачиваться app.js и появляется ошибка addMedia.js:6 Uncaught ReferenceError: App is not defined
+        return;
+    }
+    */
+    for(i in appendTo.childNodes){
+        var child = appendTo.childNodes[i];
+        if((child.tagName == 'SCRIPT') && (child.id == src)){
+            if (onload)
+                setTimeout(function () { onload() }, 100);//Если не сделать эту задержку, то при открыити локальной веб камеры иногда не успевает скачиваться app.js и появляется ошибка addMedia.js:6 Uncaught ReferenceError: App is not defined
+            return;
+        }
+    }
+
+    script = document.createElement('script');
+    script.setAttribute("type", 'text/javascript');
+    script.setAttribute("id", src);
+
+    if (onload) {
+        if (script.readyState && !script.onload) {
+            // IE, Opera
+            script.onreadystatechange = function () {
+//                alert('script.readyState: ' + script.readyState);
+/*
+                                if (script.readyState == "loaded" || script.readyState == "complete") {
+                    script.onreadystatechange = null;
+                    onload();
+                }
+*/
+                if (script.readyState == "complete") { // на случай пропуска loaded
+                    onload(); // (2)
+                }
+
+                if (script.readyState == "loaded") {
+                    setTimeout(onload, 0);  // (1)
+
+                    // убираем обработчик, чтобы не сработал на complete
+                    this.onreadystatechange = null;
+                }
+            }
+        }
+        else {
+            // Rest
+            function _onload() {
+                consoleLog('loadScript.onload() ' + this.src);
+                onload();
+            }
+            script.onload = _onload;
+
+            if (onerror)
+                script.onerror = onerror;
+            else script.onerror = function () {
+                consoleError('loadScript: "' + this.src + '" failed');
+            };
+        }
+    }
+
+    script.src = src;
+    appendTo.appendChild(script);
 }
 
 function isRussian() {
@@ -565,12 +652,39 @@ function get_cookie ( cookie_name, defaultValue)
     return defaultValue;
 }
 
+//альтернатива window.localStorage http://ustimov.org/posts/16/
 function SetCookie(name, value)
 {
+    value = value.toString();
+    //value = encodeURIComponent(value);
 	//http://ruseller.com/lessons.php?rub=28&id=593
 	var cookie_date = new Date ( );  // Текущая дата и время
 	cookie_date.setTime ( cookie_date.getTime() + 1000 * 60 * 60 * 24 * 365);
-	document.cookie = name + "=" + value + "; expires=" + cookie_date.toGMTString();
+	var length = 0, lengthMin = 0, oldValue;
+	while((length == 0) || (length != lengthMin)){
+	    document.cookie = name + "=" + value + "; expires=" + cookie_date.toGMTString();
+	    var cookieLimit = get_cookie(name, '').length;
+	    if (cookieLimit != value.length) {
+	        oldValue = value;
+	        length = parseInt((lengthMin + value.length) / 2);
+	        value = value.substring(0,length);
+	        //consoleError('Cookie Limit 1 = ' + value.length);
+	        continue;
+	    }
+	    if(length != 0){
+	        length = parseInt(length + (oldValue.length - value.length) / 2);
+	        lengthMin = value.length;
+	        value = oldValue.substring(0, length);
+	        //consoleError('Cookie Limit 2 = ' + value.length);
+	        continue;
+        }
+	    break;
+	}
+	if(length != 0){
+	    consoleError('Cookie Limit = ' + value.length);
+	    delete_cookie (name);
+	}
+	return length;
 }
 
 function delete_cookie ( cookie_name )
@@ -594,4 +708,68 @@ function getElementByClassName(parentElement, className) {
         }
     }
     return null;
+}
+
+function displayDuration(startTime, elementDuration, suffix) {
+    var dateCur = new Date();
+    var time = dateCur.getTime() - startTime;
+    var timezoneOffset = dateCur.getTimezoneOffset() * 60000;
+    var date = new Date(time + timezoneOffset);
+    //consoleLog('displayDuration() startTime = ' + startTime + ' time = ' + time + ' timezoneOffset = ' + timezoneOffset + ' date = ' + date + ' dateCur = ' + dateCur);
+    var year = date.getFullYear();//нужно анализировать для случая Time Zone < 0 (Американское время)
+    if (year == 1969)
+        var date = new Date(time + timezoneOffset + 1000 * 60 * 60);
+    else if ((year == 1970) && (date.getHours() == 1))
+        var date = new Date(time + timezoneOffset - 1000 * 60 * 60);
+    var hour = date.getHours();
+    var minute = date.getMinutes();
+    var seconds = date.getSeconds();
+    if (typeof suffix == 'undefined')
+        suffix = '';
+    elementDuration.innerText = ((hour == 0) ? '' : (hour + ':')) + minute + ':' + ((seconds < 10) ? '0' : '') + seconds + suffix;
+}
+
+function isBranchExpanded(informer) {
+    return informer.className.indexOf(' expanded') != -1;
+}
+
+function onbranchelementBase(informer, branch, expand, maxHeight) {
+    var expanded = ' expanded';
+    if(informer.className.indexOf('b-toggle') == -1)
+        consoleError('informer.className: ' + informer.className);
+    if(!isBranchExpanded(informer))
+    {
+        if((expand != null) && (expand == false))
+            return;//do not expand
+        if(typeof maxHeight == 'undefined')
+            maxHeight = window.screen.height + "px";
+        informer.style.maxHeight = maxHeight;
+        informer.className += expanded;
+        if(branch)
+            branch.innerHTML = "▼"<!-- http://htmlbook.ru/samhtml/tekst/spetssimvoly http://unicode-table.com/ru/#box-drawing -->
+        return false;
+    }
+    if((expand != null) && (expand == true))
+        return;//do not close
+    informer.style.maxHeight = "0px";
+    informer.className = informer.className.replace(expanded, '');
+    if(branch)
+        branch.innerHTML = "▶"<!-- http://htmlbook.ru/samhtml/tekst/spetssimvoly http://unicode-table.com/ru/#box-drawing -->
+    return false;
+};
+
+function onbranchelement(informer, branchId, expand, maxHeight) {
+    return onbranchelementBase(informer, document.getElementById(branchId), expand, maxHeight);
+};
+
+function onbranch(informerId, branchId, expand, maxHeight) {
+    onbranchelement(document.getElementById(informerId), branchId, expand, maxHeight);
+}
+
+function CSSescape(id) {
+    //Attention!!! CSS.escape is not compatible with Safari, IE and Opera
+    //id = CSS.escape(id);
+    if(isNaN(parseInt(id[0])))
+        return id;
+    return '\\3' + id[0] + ' ' + id.substring(1);
 }
