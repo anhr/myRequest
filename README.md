@@ -2,7 +2,7 @@
 
 The myRequest object is cross-browser XMLHttpRequest wrapper. Your request code to the server is very simple, if you are using myRequest object.
 
-Example: <a href='http://anhr.ucoz.net/myRequest/' target="_blank">XMLHttpRequest wrapper</a>.
+Example: <a href='https://anhr.github.io/myRequest/' target="_blank">XMLHttpRequest wrapper</a>.
 
 ## On the following browsers have been successfully tested:
 
